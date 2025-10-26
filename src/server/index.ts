@@ -18,7 +18,7 @@ router.post('/internal/on-comment-create', async (req, res) => {
   // Get the subreddits
   const comment = req.body.comment;
   const text = comment.body;
-  const regex = /\[([rR]\/[a-zA-Z0-9_]+)\]\(https:\/\/www\.reddit\.com\/r\/[a-zA-Z0-9_]+\/?\)|\b[rR]\/[a-zA-Z0-9_]+/g;  
+  const regex = /(?<!\[)r\/[a-zA-Z0-9_]+/g;
   const matches = [...text.matchAll(regex)];
   const subreddits = matches.map(m => m[0]);
   console.log('Comment:', text);
@@ -108,8 +108,7 @@ router.post<{ postId: string }, DecrementResponse | { status: string; message: s
 
 router.post('/internal/on-app-install', async (_req, res): Promise<void> => {
   try {
-    const post = await createPost();
-
+    const post = await createPost('r/block_battles_t0', 'r/block_battles_t1');
     res.json({
       status: 'success',
       message: `Post created in subreddit ${context.subredditName} with id ${post.id}`,
@@ -125,8 +124,7 @@ router.post('/internal/on-app-install', async (_req, res): Promise<void> => {
 
 router.post('/internal/menu/post-create', async (_req, res): Promise<void> => {
   try {
-    const post = await createPost();
-
+    const post = await createPost('r/block_battles_t0', 'r/block_battles_t1');
     res.json({
       navigateTo: `https://reddit.com/r/${context.subredditName}/comments/${post.id}`,
     });
